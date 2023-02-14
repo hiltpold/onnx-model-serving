@@ -1,0 +1,23 @@
+[package]
+name = "onnx-model-serving"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-web = "4"
+futures = "0.3.26"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+onnxruntime = "0.0.14"
+image = "0.24.5"
+imageproc = "0.23.0"
+rusttype = "0.9.3"
+lazy_static = "1.4.0"
+base64 = "0.21.0"
+actix-cors = "0.6.4"
+derive_more = "0.99.17"
+actix-web-validator = "5.0.1"
+validator = { version = "0.16", features = ["derive"] }
+regex = "1.5.6"
