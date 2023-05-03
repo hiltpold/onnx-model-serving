@@ -1,3 +1,4 @@
+use super::yolo;
 use actix_web::body::BoxBody;
 use actix_web::http::header::ContentType;
 use actix_web::{HttpRequest, HttpResponse, Responder};
@@ -32,7 +33,6 @@ pub struct ImageRequest {
     )]
     pub model_name: String,
     #[validate(length(min = 1))]
-    pub image_name: String,
     #[validate(regex(
         path = "RE_FORMAT",
         message = "Image format must be one of (jpg, jpeg or png)"
@@ -65,9 +65,8 @@ fn model_exists(model_name: &str) -> Result<(), ValidationError> {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ImageResponse {
-    pub image_name: String,
     pub result_image: String,
-    pub bounding_boxes: Vec<i32>,
+    pub bounding_boxes: Vec<yolo::BoundingBox>,
 }
 
 // Implement Responder Trait for Image

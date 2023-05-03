@@ -9,6 +9,7 @@ use onnxruntime::{
     environment::Environment, ndarray, tensor::OrtOwnedTensor, GraphOptimizationLevel, LoggingLevel,
 };
 use rusttype::{Font, Scale};
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::path::PathBuf;
 
@@ -19,12 +20,13 @@ pub struct ImageResult {
     pub bounding_boxes: Vec<BoundingBox>,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
 pub struct BoundingBox {
     pub min_x: i32,
     pub min_y: i32,
     pub height: i32,
     pub width: i32,
-    pub class: f32,
+    pub class: String,
     pub conf: f32,
 }
 
@@ -111,7 +113,7 @@ pub fn detect(
         let green = Rgba([0u8, 255u8, 0u8, 255u8]);
         let white = Rgba([255u8, 255u8, 255u8, 255u8]);
 
-        let font = Vec::from(include_bytes!("../data/font/courier_new.ttf") as &[u8]);
+        let font = Vec::from(include_bytes!("./font/courier_new.ttf") as &[u8]);
         let font = Font::try_from_vec(font).unwrap();
 
         let text = classes
@@ -134,7 +136,11 @@ pub fn detect(
             min_y: min_y,
             height: height,
             width: width,
-            class: bounding_box[5],
+            class: classes
+                .get(&(bounding_box[5] as usize))
+                .copied()
+                .unwrap()
+                .to_string(),
             conf: bounding_box[6],
         })
     });

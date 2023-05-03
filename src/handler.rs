@@ -9,6 +9,7 @@ use base64::engine::Engine as _;
 use image::{self, ImageFormat};
 use std::env;
 use validator::Validate;
+
 pub fn config(conf: &mut web::ServiceConfig) {
     let scope = web::scope("/api/v1")
         .service(health)
@@ -20,7 +21,7 @@ pub fn config(conf: &mut web::ServiceConfig) {
 #[post("/objectdetection")]
 async fn objectdetection(req: web::Json<ImageRequest>) -> Result<impl Responder, AppError> {
     let is_valid = req.validate().map_err(|err| AppError::from(err));
-    let mut model_path = env::current_dir().unwrap(); //.to_str().unwrap().to_string();
+    let mut model_path = env::current_dir().unwrap();
 
     match is_valid {
         Ok(_) => {
@@ -41,9 +42,8 @@ async fn objectdetection(req: web::Json<ImageRequest>) -> Result<impl Responder,
             };
 
             Ok(HttpResponse::Ok().json(ImageResponse {
-                image_name: req.image_name.to_owned(),
                 result_image: BASE64.encode(&inferred_image.result_image),
-                bounding_boxes: Vec::new(),
+                bounding_boxes: inferred_image.bounding_boxes,
             }))
         }
         Err(err) => Err(err),

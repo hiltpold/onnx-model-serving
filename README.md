@@ -14,6 +14,10 @@
 * put the the model in the folder `./model/`
 * currently a YOLOv7 model trained on the [militaryaircrafts](https://www.kaggle.com/datasets/a2015003713/militaryaircraftdetectiondataset) is provided
 
+# Docker
+* export PROJECT="onnx-model-serving"
+* Build image `docker build -t onnx-model-serving:latest --build-arg project=$PROJECT .`
+* Launch container `docker run -p 5000:5000 onnx-model-serving:latest`
+
 # Todo
 * better error handling
-* return bounding boxes

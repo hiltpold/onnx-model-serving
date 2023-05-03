@@ -18,7 +18,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(cors)
             .wrap(Logger::default())
     })
-    .bind("127.0.0.1:8080")?
+    .bind("0.0.0.0:5000")?
     .run()
     .await?;
     Ok(())
