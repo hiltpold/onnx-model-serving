@@ -20,5 +20,13 @@
 * launch container `docker run -p 5000:5000 onnx-model-serving:latest`
 * test as previously explained
 
+## Endpoints
+
+| endpoint  | method  | payload  | response  |   |
+|---|---|---|---|---|
+|  api/v1/heartbeat  |  GET | -  |   |  {"status": "running"} |
+|  /api/v1/objectdetection | POST  | {"image_format": "jpg", "model_name":"militaryaircrafts.onnx", "image": <base64_encoded_image>"} |  {"result_image": <base64_encoded_image_with_bounding_boxes>, "bounding_boxes": [{"min_x": x, "min_y":y,"height": h, "width": w, "class": "c", "conf": c }, ...]} |   |
+
 # Todo
 * better error handling
+
