@@ -1,0 +1,60 @@
+
+FROM rust:latest as build
+
+ARG project
+
+# create new project
+RUN USER=root cargo new --bin $project
+
+# use project as workdir
+WORKDIR $project
+
+# copy manifests
+COPY ./Cargo.lock .
+COPY ./Cargo.toml .
+
+# build dependencies
+RUN cargo build --release & rm ./src/*.rs
+
+# copy  source tree
+COPY ./src ./src
+
+# build for release
+#RUN rm ./target/release/deps/$project*
+RUN cargo build --release
+
+# copy model
+COPY ./model /$project/model/
+
+# fetch shared library
+RUN mkdir lib
+COPY ./docker/copy_lib.sh .
+RUN chmod +x copy_lib.sh
+RUN ./copy_lib.sh
+
+## final base
+FROM debian:stable-slim as app
+#
+ARG project
+WORKDIR /app
+#
+## copy the build artifact from the build stage
+COPY --from=build /$project/target/release/$project .
+
+RUN mkdir lib
+COPY --from=build /$project/lib/ ./lib
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/app/lib"
+
+#RUN export ="/app/lib"
+#RUN echo $LD_LIBRARY_PATH
+# fetch library for onnxruntime
+RUN mv $project application
+# run  binary
+#CMD ["cargo","run","--release"]
+#RUN echo "#!/bin/bash \n " > test.sh
+#RUN chmod +x test.sh
+#RUN ./test.sh
+#RUN bash -c 'echo -e echo "${LD_LIBRARY_PATH}"'
+
+#ENTRYPOINT [ "ls"]
+CMD ["./application"]
